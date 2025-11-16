@@ -2,11 +2,11 @@ import mysql.connector
 import os
 
 db = mysql.connector.connect(
-    host=os.environ["MYSQLHOST"],
-    user=os.environ["MYSQLUSER"],
-    password=os.environ["MYSQLPASSWORD"],
-    database=os.environ["MYSQLDATABASE"],
-    port=int(os.environ["MYSQLPORT"])
+    host=os.environ["MYSQL_HOST"],
+    user=os.environ["MYSQL_USER"],
+    password=os.environ["MYSQL_PASSWORD"],
+    database=os.environ["MYSQL_DATABASE"],
+    port=int(os.environ["MYSQL_PORT"])
 )
 
 cursor = db.cursor()
