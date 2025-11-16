@@ -1,29 +1,23 @@
 import mysql.connector
-import os
 import streamlit as st
+import os
 
 db = mysql.connector.connect(
     host=st.secrets["MYSQLHOST"],
     user=st.secrets["MYSQLUSER"],
     password=st.secrets["MYSQLPASSWORD"],
-    port=int(st.secrets["MYSQLPORT"]),
-    database=st.secrets["MYSQLDATABASE"]
+    database=st.secrets["MYSQL_DATABASE"],
+    port=int(st.secrets["MYSQLPORT"])
 )
 
 cursor = db.cursor()
 
 def execute_sql(sql):
     try:
-        # Always select DB first
-        cursor.execute(f"USE {st.secrets['MYSQLDATABASE']};")
-
         cursor.execute(sql)
-
         if cursor.description:
-            rows = cursor.fetchall()
-            return rows
+            return cursor.fetchall()
         db.commit()
         return "Query executed successfully!"
-
     except mysql.connector.Error as err:
         return f"Execution Error: {err}"
