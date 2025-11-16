@@ -1,22 +1,21 @@
 import mysql.connector
-import streamlit as st
+import os
 
 db = mysql.connector.connect(
-    host=st.secrets["MYSQLHOST"],
-    user=st.secrets["MYSQLUSER"],
-    password=st.secrets["MYSQLPASSWORD"],
-    database=st.secrets["MYSQL_DATABASE"],
-    port=int(st.secrets["MYSQLPORT"])
+    host=os.getenv("MYSQLHOST"),
+    user=os.getenv("MYSQLUSER"),
+    password=os.getenv("MYSQLPASSWORD"),
+    database=os.getenv("MYSQLDATABASE"),
+    port=int(os.getenv("MYSQLPORT")),
 )
+cursor = db.cursor()
 
 def execute_sql(sql):
-    cursor = db.cursor()
     try:
         cursor.execute(sql)
         if cursor.description:
             return cursor.fetchall()
-        else:
-            db.commit()
-            return "Query executed successfully!"
+        db.commit()
+        return "Query executed successfully!"
     except mysql.connector.Error as err:
         return f"Execution Error: {err}"
