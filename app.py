@@ -3,7 +3,6 @@ import pandas as pd
 from agent_sql import generate_sql
 from db import execute_sql
 
-
 st.set_page_config(page_title="AI SQL Assistant", layout="wide")
 
 st.title("🤖 AI SQL Assistant (Groq + MySQL)")
@@ -19,7 +18,7 @@ if "sql_history" not in st.session_state:
 tab = st.sidebar.radio("Navigation", ["💬 Chat", "📂 Upload Files", "📦 Export SQL History"])
 
 # ==============================
-#  CHAT TAB
+# CHAT TAB
 # ==============================
 if tab == "💬 Chat":
     st.subheader("Ask database:")
@@ -35,21 +34,23 @@ if tab == "💬 Chat":
         with st.chat_message("user"):
             st.write(prompt)
 
-        # Generate SQL with Groq
-        sql = generate_sql(prompt)
+        # Detect if user typed SQL manually
+        if prompt.strip().lower().startswith(("select", "insert", "update", "delete", "create", "drop", "alter", "use", "truncate", "show")):
+            sql = prompt
+        else:
+            sql = generate_sql(prompt)
+
         st.session_state.history.append(("assistant", sql))
         st.session_state.sql_history.append(sql)
 
         with st.chat_message("assistant"):
             st.code(sql, language="sql")
-
             result = execute_sql(sql)
             st.write("**Result:**")
             st.write(result)
 
-
 # ==============================
-#  UPLOAD FILE TAB
+# UPLOAD FILE TAB
 # ==============================
 elif tab == "📂 Upload Files":
     st.subheader("Upload CSV or Excel")
@@ -66,9 +67,8 @@ elif tab == "📂 Upload Files":
         st.dataframe(df)
         st.success("Excel Loaded! Ask: insert Excel into students table")
 
-
 # ==============================
-#  EXPORT SQL HISTORY TAB
+# EXPORT SQL HISTORY TAB
 # ==============================
 elif tab == "📦 Export SQL History":
     st.subheader("Download all SQL Queries")
